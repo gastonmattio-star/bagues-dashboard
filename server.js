@@ -109,23 +109,6 @@ app.get('/api/google-ads', async (req, res) => {
   }
 });
 
-  try {
-    const resp = await fetch('https://api.anthropic.com/v1/messages', {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-        'x-api-key': ANTHROPIC_KEY,
-        'anthropic-version': '2023-06-01'
-      },
-      body: JSON.stringify(req.body)
-    });
-    const data = await resp.json();
-    res.json(data);
-  } catch (err) {
-    res.status(500).json({ error: err.message });
-  }
-});
-
 // ── Fallback → index.html ─────────────────────────────────────────────────────
 app.get('*', (req, res) => {
   res.sendFile(path.join(__dirname, 'public', 'index.html'));
@@ -134,5 +117,5 @@ app.get('*', (req, res) => {
 app.listen(PORT, () => {
   console.log(`🚀 Bagues Dashboard corriendo en puerto ${PORT}`);
   console.log(`   Metricool token: ${METRICOOL_TOKEN ? '✓ configurado' : '✗ falta configurar'}`);
-  console.log(`   Anthropic key:   ${ANTHROPIC_KEY   ? '✓ configurado' : '✗ falta configurar'}`);
+
 });

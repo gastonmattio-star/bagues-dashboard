@@ -1,0 +1,14 @@
+services:
+  - type: web
+    name: bagues-dashboard
+    env: node
+    buildCommand: npm install
+    startCommand: npm start
+    envVars:
+      - key: METRICOOL_TOKEN
+        sync: false
+      - key: ANTHROPIC_KEY
+        sync: false
+      - key: BLOG_ID
+        value: "4634674"
+    autoDeploy: true

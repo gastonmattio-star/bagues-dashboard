@@ -1,0 +1,675 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Bagues Oficial — Analytics</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@300;400;500;600&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --bg:#0f0f11;--surface:#17171a;--surface2:#1e1e22;--surface3:#26262c;
+  --border:#2e2e36;--border2:#3a3a44;
+  --text:#f0f0f4;--text2:#9090a0;--text3:#5a5a6a;
+  --green:#00e5a0;--green2:#00b87d;--green-dim:rgba(0,229,160,0.1);
+  --blue:#4d9fff;--blue-dim:rgba(77,159,255,0.1);
+  --amber:#ffb800;--amber-dim:rgba(255,184,0,0.1);
+  --red:#ff5757;--red-dim:rgba(255,87,87,0.1);
+  --purple:#a78bfa;--purple-dim:rgba(167,139,250,0.1);
+  --r:10px;--r2:14px;
+}
+html,body{background:var(--bg);color:var(--text);font-family:'DM Sans',sans-serif;font-size:14px;min-height:100vh}
+body{padding:20px}
+
+.header{display:flex;align-items:center;justify-content:space-between;margin-bottom:24px;gap:12px;flex-wrap:wrap}
+.brand{display:flex;align-items:center;gap:10px}
+.brand-dot{width:8px;height:8px;border-radius:50%;background:var(--green);box-shadow:0 0 8px var(--green)}
+.brand-name{font-size:16px;font-weight:600;letter-spacing:-0.3px}
+.brand-sub{font-size:11px;color:var(--text3);font-family:'DM Mono',monospace;margin-top:1px}
+.header-right{display:flex;align-items:center;gap:8px;flex-wrap:wrap}
+.date-row{display:flex;align-items:center;gap:6px;background:var(--surface);border:1px solid var(--border);border-radius:var(--r);padding:6px 10px}
+.date-row label{font-size:11px;color:var(--text3);font-family:'DM Mono',monospace;white-space:nowrap}
+.date-row input[type=date]{background:transparent;border:none;color:var(--text);font-family:'DM Mono',monospace;font-size:12px;outline:none;width:120px;cursor:pointer}
+.date-row input[type=date]::-webkit-calendar-picker-indicator{filter:invert(0.5);cursor:pointer}
+.date-sep{color:var(--text3);font-size:11px}
+.btn{font-family:'DM Sans',sans-serif;font-size:12px;font-weight:500;padding:7px 14px;border-radius:var(--r);cursor:pointer;display:flex;align-items:center;gap:6px;transition:all 0.15s;white-space:nowrap;border:1px solid}
+.btn-green{background:var(--green-dim);border-color:var(--green2);color:var(--green)}
+.btn-green:hover{background:rgba(0,229,160,0.18)}
+.btn-green:disabled{opacity:0.5;cursor:not-allowed}
+.spin{display:inline-block;animation:spin 0.8s linear infinite}
+@keyframes spin{to{transform:rotate(360deg)}}
+
+.status-bar{background:var(--surface);border:1px solid var(--border);border-radius:var(--r);padding:8px 14px;font-size:11px;color:var(--text3);font-family:'DM Mono',monospace;margin-bottom:20px;display:flex;align-items:center;gap:8px;min-height:34px}
+.sdot{width:6px;height:6px;border-radius:50%;background:var(--green);flex-shrink:0}
+.sdot.loading{background:var(--amber);animation:pulse 1s ease-in-out infinite}
+.sdot.error{background:var(--red)}
+@keyframes pulse{0%,100%{opacity:1}50%{opacity:0.3}}
+
+.tabs{display:flex;gap:4px;margin-bottom:20px;background:var(--surface);border:1px solid var(--border);border-radius:var(--r);padding:4px;width:fit-content;flex-wrap:wrap}
+.tab{padding:6px 14px;border-radius:7px;font-size:12px;font-weight:500;cursor:pointer;color:var(--text2);transition:all 0.15s;white-space:nowrap}
+.tab.active{background:var(--surface3);color:var(--text)}
+.tab:hover:not(.active){color:var(--text);background:var(--surface2)}
+
+.kpi-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(155px,1fr));gap:10px;margin-bottom:20px}
+.kpi{background:var(--surface);border:1px solid var(--border);border-radius:var(--r2);padding:16px}
+.kpi-label{font-size:10px;color:var(--text3);font-family:'DM Mono',monospace;margin-bottom:8px;text-transform:uppercase;letter-spacing:0.5px}
+.kpi-val{font-size:24px;font-weight:600;letter-spacing:-1px;line-height:1}
+.kpi-sub{font-size:11px;margin-top:6px;font-family:'DM Mono',monospace;color:var(--text3)}
+.green{color:var(--green)} .blue{color:var(--blue)} .amber{color:var(--amber)} .purple{color:var(--purple)}
+.up{color:var(--green)} .down{color:var(--red)}
+
+.section-title{font-size:10px;font-weight:600;color:var(--text3);text-transform:uppercase;letter-spacing:1px;font-family:'DM Mono',monospace;margin-bottom:12px;margin-top:4px}
+.chart-card{background:var(--surface);border:1px solid var(--border);border-radius:var(--r2);padding:18px;margin-bottom:14px}
+.chart-card-header{display:flex;align-items:baseline;justify-content:space-between;margin-bottom:14px;gap:8px;flex-wrap:wrap}
+.chart-title{font-size:13px;font-weight:500}
+.chart-meta{font-size:11px;color:var(--text3);font-family:'DM Mono',monospace}
+.chart-wrap{position:relative;width:100%}
+.legend{display:flex;flex-wrap:wrap;gap:14px;margin-bottom:10px}
+.legend span{display:flex;align-items:center;gap:5px;font-size:11px;color:var(--text3)}
+.ldot{width:8px;height:8px;border-radius:2px;flex-shrink:0}
+.two-col{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-bottom:14px}
+@media(max-width:580px){.two-col{grid-template-columns:1fr}}
+
+.insight{background:var(--surface2);border:1px solid var(--border);border-radius:var(--r);padding:14px;margin-bottom:10px;border-left:3px solid var(--green)}
+.insight.warn{border-left-color:var(--amber)}
+.insight.info{border-left-color:var(--blue)}
+.insight.danger{border-left-color:var(--red)}
+.insight-t{font-size:12px;font-weight:600;margin-bottom:4px}
+.insight-b{font-size:12px;color:var(--text2);line-height:1.6}
+
+.ads-table{width:100%;border-collapse:collapse;font-size:12px}
+.ads-table th{text-align:left;padding:8px 10px;color:var(--text3);font-family:'DM Mono',monospace;font-size:10px;text-transform:uppercase;letter-spacing:0.5px;border-bottom:1px solid var(--border);font-weight:400}
+.ads-table td{padding:10px;border-bottom:1px solid var(--border);color:var(--text2);vertical-align:middle}
+.ads-table td:first-child{color:var(--text);font-weight:500;max-width:200px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.ads-table tr:last-child td{border-bottom:none}
+.ads-table tr:hover td{background:var(--surface2)}
+.badge{display:inline-block;font-size:10px;padding:2px 8px;border-radius:20px;font-family:'DM Mono',monospace}
+.badge.active{background:var(--green-dim);color:var(--green);border:1px solid rgba(0,229,160,0.3)}
+.badge.paused{background:var(--surface3);color:var(--text3);border:1px solid var(--border)}
+.type-badge{font-size:10px;background:var(--surface3);padding:2px 6px;border-radius:4px;color:var(--text3);font-family:'DM Mono',monospace}
+.roas-good{color:var(--green);font-family:'DM Mono',monospace}
+.roas-bad{color:var(--red);font-family:'DM Mono',monospace}
+.roas-warn{color:var(--amber);font-family:'DM Mono',monospace}
+.mono{font-family:'DM Mono',monospace}
+
+.empty{color:var(--text3);font-size:12px;text-align:center;padding:48px;font-family:'DM Mono',monospace;line-height:1.8}
+.loading-row{opacity:0.5;animation:pulse 1.2s ease-in-out infinite}
+
+</style>
+</head>
+<body>
+
+<div class="header">
+  <div class="brand">
+    <div class="brand-dot"></div>
+    <div>
+      <div class="brand-name">Bagues Oficial</div>
+      <div class="brand-sub">analytics dashboard · live</div>
+    </div>
+  </div>
+  <div class="header-right">
+    <div class="date-row">
+      <label>DESDE</label>
+      <input type="date" id="dateFrom" value="">
+      <span class="date-sep">→</span>
+      <label>HASTA</label>
+      <input type="date" id="dateTo" value="">
+    </div>
+    <button class="btn btn-green" id="btnRefresh" onclick="loadAll()">
+      <span id="refreshIcon">↻</span> Actualizar
+    </button>
+  </div>
+</div>
+
+<div class="status-bar">
+  <div class="sdot" id="sdot"></div>
+  <span id="statusText">Seleccioná un período y hacé clic en Actualizar.</span>
+</div>
+
+<div class="tabs">
+  <div class="tab active" onclick="switchTab('overview')">Resumen</div>
+  <div class="tab" onclick="switchTab('instagram')">Instagram</div>
+  <div class="tab" onclick="switchTab('tiktok')">TikTok</div>
+  <div class="tab" onclick="switchTab('youtube')">YouTube</div>
+  <div class="tab" onclick="switchTab('metaads')">Meta Ads</div>
+  <div class="tab" onclick="switchTab('googleads')">Google Ads</div>
+</div>
+
+<div id="tabContent">
+  <div class="empty">Seleccioná un período y hacé clic en <strong>Actualizar</strong> para cargar los datos en tiempo real.</div>
+</div>
+
+  <div class="ai-output" id="aiOutput"><span class="thinking">Cargá los datos y preguntame lo que quieras...</span></div>
+  <div class="ai-input-row">
+    <input class="ai-input" id="aiInput" placeholder="Ej: ¿qué campaña tiene mejor ROAS? ¿cómo va TikTok este mes?" onkeydown="if(event.key==='Enter'&&!event.shiftKey){event.preventDefault();askAI()}">
+    <button class="btn-ask" id="btnAsk" onclick="askAI()">Preguntar ↗</button>
+  </div>
+</div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.js"></script>
+<script>
+// ── Estado global ─────────────────────────────────────────────────────────────
+let currentTab = 'overview';
+let data = {};
+let charts = {};
+
+// ── Formato de números ────────────────────────────────────────────────────────
+const fmt = n => {
+  if (n === null || n === undefined || isNaN(n)) return '—';
+  if (Math.abs(n) >= 1000000) return (n/1000000).toFixed(1)+'M';
+  if (Math.abs(n) >= 1000)    return (n/1000).toFixed(1)+'K';
+  return Math.round(n).toLocaleString('es-AR');
+};
+const fmtMoney = n => {
+  if (!n || isNaN(n)) return '—';
+  if (n >= 1000000) return '$'+(n/1000000).toFixed(1)+'M';
+  if (n >= 1000)    return '$'+(n/1000).toFixed(0)+'K';
+  return '$'+Math.round(n);
+};
+const fmtPct  = n => n ? n.toFixed(2)+'%' : '—';
+const fmtRoas = n => n ? n.toFixed(2)+'x' : '—';
+
+// ── Utilidades UI ─────────────────────────────────────────────────────────────
+function setStatus(msg, state='idle') {
+  document.getElementById('statusText').textContent = msg;
+  const dot = document.getElementById('sdot');
+  dot.className = 'sdot' + (state==='loading' ? ' loading' : state==='error' ? ' error' : '');
+}
+
+function setDefaultDates() {
+  const to   = new Date();
+  const from = new Date(); from.setDate(from.getDate() - 30);
+  const fmt  = d => d.toISOString().split('T')[0];
+  document.getElementById('dateFrom').value = fmt(from);
+  document.getElementById('dateTo').value   = fmt(to);
+}
+
+// ── Llamadas al backend ───────────────────────────────────────────────────────
+async function apiGet(path) {
+  const res = await fetch(path);
+  if (!res.ok) { const e = await res.json(); throw new Error(e.error || res.statusText); }
+  return res.json();
+}
+
+async function getAnalytics(network, metrics, start, end) {
+  const metricStr = Array.isArray(metrics) ? metrics.join(',') : metrics;
+  return apiGet(`/api/analytics?network=${network}&metric=${encodeURIComponent(metricStr)}&start=${start}&end=${end}`);
+}
+
+// ── Parsers por plataforma ────────────────────────────────────────────────────
+function parseMonthly(raw, metric) {
+  const vals = raw?.[metric]?.data?.[0]?.values || [];
+  const byMonth = {};
+  vals.forEach(v => {
+    const mo = v.dateTime.slice(0,7);
+    byMonth[mo] = (byMonth[mo] || 0) + v.value;
+  });
+  return byMonth;
+}
+
+function parseMaxByMonth(raw, metric) {
+  const vals = raw?.[metric]?.data?.[0]?.values || [];
+  const byMonth = {};
+  vals.forEach(v => {
+    const mo = v.dateTime.slice(0,7);
+    byMonth[mo] = Math.max(byMonth[mo] || 0, v.value);
+  });
+  return byMonth;
+}
+
+function sumValues(raw, metric) {
+  const vals = raw?.[metric]?.data?.[0]?.values || [];
+  return vals.reduce((s, v) => s + (v.value || 0), 0);
+}
+
+function lastValue(raw, metric) {
+  const vals = raw?.[metric]?.data?.[0]?.values || [];
+  if (!vals.length) return 0;
+  return vals.sort((a,b) => b.dateTime.localeCompare(a.dateTime))[0].value;
+}
+
+function firstValue(raw, metric) {
+  const vals = raw?.[metric]?.data?.[0]?.values || [];
+  if (!vals.length) return 0;
+  return vals.sort((a,b) => a.dateTime.localeCompare(b.dateTime))[0].value;
+}
+
+// ── Carga de datos ────────────────────────────────────────────────────────────
+async function loadAll() {
+  const from = document.getElementById('dateFrom').value;
+  const to   = document.getElementById('dateTo').value;
+  if (!from || !to) { setStatus('Seleccioná un período válido', 'error'); return; }
+
+  const btn  = document.getElementById('btnRefresh');
+  const icon = document.getElementById('refreshIcon');
+  btn.disabled = true;
+  icon.className = 'spin'; icon.textContent = '↻';
+  data = {};
+  setStatus('Cargando datos de todas las plataformas...', 'loading');
+
+  try {
+    const [ig, tt, yt, ma, ga] = await Promise.allSettled([
+      loadInstagram(from, to),
+      loadTikTok(from, to),
+      loadYouTube(from, to),
+      loadMetaAds(from, to),
+      loadGoogleAds(from, to),
+    ]);
+    if (ig.status === 'fulfilled') data.instagram = ig.value;
+    if (tt.status === 'fulfilled') data.tiktok    = tt.value;
+    if (yt.status === 'fulfilled') data.youtube   = yt.value;
+    if (ma.status === 'fulfilled') data.metaads   = ma.value;
+    if (ga.status === 'fulfilled') data.googleads = ga.value;
+
+    const ok = Object.keys(data).length;
+    setStatus(`${ok}/5 plataformas cargadas · ${from} → ${to} · ${new Date().toLocaleTimeString('es-AR')}`, ok < 5 ? 'error' : 'idle');
+    renderTab();
+  } catch (e) {
+    setStatus('Error: ' + e.message, 'error');
+  } finally {
+    btn.disabled = false;
+    icon.className = ''; icon.textContent = '↻';
+  }
+}
+
+async function loadInstagram(from, to) {
+  const raw = await getAnalytics('instagram',
+    ['followers','postsInteractions','count','reach','impressions','likes','comments','saves','shares','engagement'],
+    from, to);
+  return {
+    followersEnd:   lastValue(raw,  'account:followers'),
+    followersStart: firstValue(raw, 'account:followers'),
+    posts:     sumValues(raw, 'posts:count'),
+    reels:     sumValues(raw, 'reels:count'),
+    postReach: sumValues(raw, 'posts:reach'),
+    postLikes: sumValues(raw, 'posts:likes'),
+    postShares:sumValues(raw, 'posts:shares'),
+    postEng:   (() => {
+      const vs = raw?.['posts:engagement']?.data?.[0]?.values || [];
+      return vs.length ? vs.reduce((s,v)=>s+v.value,0)/vs.length : 0;
+    })(),
+    reelReach: sumValues(raw, 'reels:reach'),
+    reelShares:sumValues(raw, 'reels:shares'),
+    reelEng:   (() => {
+      const vs = raw?.['reels:engagement']?.data?.[0]?.values || [];
+      return vs.length ? vs.reduce((s,v)=>s+v.value,0)/vs.length : 0;
+    })(),
+    reelReachValues: (raw?.['reels:reach']?.data?.[0]?.values || [])
+      .sort((a,b)=>a.dateTime.localeCompare(b.dateTime))
+      .map(v => ({ label: v.dateTime.slice(5,10), val: Math.round(v.value/1000*10)/10 })),
+    _raw: raw
+  };
+}
+
+async function loadTikTok(from, to) {
+  const raw = await getAnalytics('tiktok',
+    ['followers_count','followers_delta_count','videos','views','interactions','likes','shares','comments','engagement'],
+    from, to);
+  return {
+    followersEnd:   lastValue(raw,  'account:followers_count'),
+    followersStart: firstValue(raw, 'account:followers_count'),
+    newFollowers:   sumValues(raw,  'account:followers_delta_count'),
+    videos:   sumValues(raw, 'videos:videos'),
+    views:    sumValues(raw, 'videos:views'),
+    likes:    sumValues(raw, 'videos:likes'),
+    shares:   sumValues(raw, 'videos:shares'),
+    comments: sumValues(raw, 'videos:comments'),
+    avgEng: (() => {
+      const vs = raw?.['videos:engagement']?.data?.[0]?.values || [];
+      return vs.length ? vs.reduce((s,v)=>s+v.value,0)/vs.length : 0;
+    })(),
+    viewsByVideo: (raw?.['videos:views']?.data?.[0]?.values || [])
+      .sort((a,b)=>a.dateTime.localeCompare(b.dateTime))
+      .map(v => ({ label: v.dateTime.slice(5,10), val: v.value })),
+    _raw: raw
+  };
+}
+
+async function loadYouTube(from, to) {
+  const raw = await getAnalytics('youtube',
+    ['yttotalSubscribers','ytsubscribersGained','ytsubscribersLost','ytVideos','views','likes','comments','shares','interactions'],
+    from, to);
+
+  // account metrics are in [[timestamp_ms, value]] format
+  const parseTsList = key => {
+    const arr = raw?.[key] || [];
+    return arr.map(([ts, val]) => ({
+      mo: new Date(parseInt(ts)).toISOString().slice(0,7),
+      val: parseFloat(val)
+    }));
+  };
+  const subEntries  = parseTsList('account:yttotalSubscribers');
+  const gainEntries = parseTsList('account:ytsubscribersGained');
+  const lostEntries = parseTsList('account:ytsubscribersLost');
+  const videoEntries= parseTsList('account:ytVideos');
+
+  const subsEnd   = subEntries.length ? Math.max(...subEntries.map(e=>e.val)) : 0;
+  const subsStart = subEntries.length ? Math.min(...subEntries.map(e=>e.val)) : 0;
+  const gained    = gainEntries.reduce((s,e)=>s+e.val,0);
+  const lost      = lostEntries.reduce((s,e)=>s+e.val,0);
+  const videos    = videoEntries.reduce((s,e)=>s+e.val,0);
+
+  return {
+    subsEnd, subsStart,
+    gained: Math.round(gained),
+    lost:   Math.round(lost),
+    videos: Math.round(videos),
+    views:    sumValues(raw, 'videos:views'),
+    likes:    sumValues(raw, 'videos:likes'),
+    shares:   sumValues(raw, 'videos:shares'),
+    interactions: sumValues(raw, 'videos:interactions'),
+    _raw: raw
+  };
+}
+
+async function loadMetaAds(from, to) {
+  const startFmt = from.replace(/-/g,'');
+  const endFmt   = to.replace(/-/g,'');
+  const camps    = await apiGet(`/api/meta-ads?start=${startFmt}&end=${endFmt}`);
+  const arr      = Array.isArray(camps) ? camps : [];
+  return {
+    campaigns: arr.map(c => ({
+      name:        c.name,
+      status:      c.status,
+      objective:   c.objective,
+      impressions: c.impressions,
+      reach:       c.reach,
+      clicks:      c.clicks,
+      spent:       c.spent,
+      roas:        c.purchaseROAS,
+      results:     c.results,
+      resultsLabel:c.resultsLabel,
+      ctr:         c.ctr,
+      cpm:         c.cpm,
+    })),
+    total: {
+      impressions: arr.reduce((s,c)=>s+(c.impressions||0),0),
+      reach:       arr.reduce((s,c)=>s+(c.reach||0),0),
+      clicks:      arr.reduce((s,c)=>s+(c.clicks||0),0),
+      spent:       arr.reduce((s,c)=>s+(c.spent||0),0),
+    }
+  };
+}
+
+async function loadGoogleAds(from, to) {
+  const startFmt = from.replace(/-/g,'');
+  const endFmt   = to.replace(/-/g,'');
+  const camps    = await apiGet(`/api/google-ads?start=${startFmt}&end=${endFmt}`);
+  const arr      = Array.isArray(camps) ? camps : [];
+  return {
+    campaigns: arr.map(c => ({
+      name:        c.name,
+      type:        c.objective || c.advertisingChannelType || 'SEARCH',
+      impressions: c.impressions,
+      clicks:      c.clicks,
+      spent:       c.spent,
+      roas:        c.purchaseROAS,
+      conversions: c.conversions,
+      ctr:         c.ctr || c.gadsCtr,
+      cpm:         c.cpm,
+      cpc:         c.cpc,
+    })),
+    total: {
+      impressions: arr.reduce((s,c)=>s+(c.impressions||0),0),
+      clicks:      arr.reduce((s,c)=>s+(c.clicks||0),0),
+      spent:       arr.reduce((s,c)=>s+(c.spent||0),0),
+    }
+  };
+}
+
+// ── Tabs y render ─────────────────────────────────────────────────────────────
+function switchTab(tab) {
+  currentTab = tab;
+  document.querySelectorAll('.tab').forEach((el, i) => {
+    el.classList.toggle('active', ['overview','instagram','tiktok','youtube','metaads','googleads'][i] === tab);
+  });
+  destroyCharts();
+  renderTab();
+}
+
+function destroyCharts() {
+  Object.values(charts).forEach(c => { try { c.destroy(); } catch(e){} });
+  charts = {};
+}
+
+function renderTab() {
+  const c  = document.getElementById('tabContent');
+  const t  = currentTab;
+  const ig = data.instagram || {};
+  const tt = data.tiktok    || {};
+  const yt = data.youtube   || {};
+  const ma = data.metaads   || {};
+  const ga = data.googleads || {};
+
+  if (!Object.keys(data).length) {
+    c.innerHTML = `<div class="empty">Seleccioná un período y hacé clic en <strong>Actualizar</strong> para cargar los datos en tiempo real desde Metricool.</div>`;
+    return;
+  }
+
+  if (t === 'overview')   renderOverview(c, ig, tt, yt, ma, ga);
+  else if (t === 'instagram') renderInstagram(c, ig);
+  else if (t === 'tiktok')    renderTikTok(c, tt);
+  else if (t === 'youtube')   renderYouTube(c, yt);
+  else if (t === 'metaads')   renderMetaAds(c, ma);
+  else if (t === 'googleads') renderGoogleAds(c, ga);
+
+  setTimeout(buildCharts, 60);
+}
+
+// ── Renders ───────────────────────────────────────────────────────────────────
+function renderOverview(c, ig, tt, yt, ma, ga) {
+  const igGrowth = (ig.followersEnd || 0) - (ig.followersStart || 0);
+  const maSpent  = ma.total?.spent  || 0;
+  const gaSpent  = ga.total?.spent  || 0;
+  c.innerHTML = `
+  <p class="section-title">Audiencia</p>
+  <div class="kpi-grid">
+    <div class="kpi"><div class="kpi-label">Instagram</div><div class="kpi-val green">${fmt(ig.followersEnd)}</div><div class="kpi-sub up">+${fmt(igGrowth)}</div></div>
+    <div class="kpi"><div class="kpi-label">TikTok</div><div class="kpi-val blue">${fmt(tt.followersEnd)}</div><div class="kpi-sub up">+${fmt(tt.newFollowers)}</div></div>
+    <div class="kpi"><div class="kpi-label">YouTube</div><div class="kpi-val amber">${fmt(yt.subsEnd)}</div><div class="kpi-sub up">+${fmt(yt.gained)} ganados</div></div>
+    <div class="kpi"><div class="kpi-label">Comunidad total</div><div class="kpi-val purple">${fmt((ig.followersEnd||0)+(tt.followersEnd||0)+(yt.subsEnd||0))}</div><div class="kpi-sub">3 plataformas</div></div>
+  </div>
+  <p class="section-title">Inversión publicitaria</p>
+  <div class="kpi-grid">
+    <div class="kpi"><div class="kpi-label">Meta Ads</div><div class="kpi-val amber">${fmtMoney(maSpent)}</div><div class="kpi-sub">ARS · ${(ma.campaigns||[]).filter(x=>x.status==='ACTIVE').length} activas</div></div>
+    <div class="kpi"><div class="kpi-label">Google Ads</div><div class="kpi-val amber">${fmtMoney(gaSpent)}</div><div class="kpi-sub">ARS · ${(ga.campaigns||[]).length} campañas</div></div>
+    <div class="kpi"><div class="kpi-label">Total invertido</div><div class="kpi-val">${fmtMoney(maSpent+gaSpent)}</div><div class="kpi-sub">ARS</div></div>
+    <div class="kpi"><div class="kpi-label">Impresiones pagas</div><div class="kpi-val">${fmt((ma.total?.impressions||0)+(ga.total?.impressions||0))}</div><div class="kpi-sub">Meta + Google</div></div>
+  </div>
+  <p class="section-title">Contenido orgánico</p>
+  <div class="kpi-grid">
+    <div class="kpi"><div class="kpi-label">Posts IG</div><div class="kpi-val green">${ig.posts||0}</div><div class="kpi-sub">eng. ${fmtPct(ig.postEng)}</div></div>
+    <div class="kpi"><div class="kpi-label">Reels IG</div><div class="kpi-val green">${ig.reels||0}</div><div class="kpi-sub">eng. ${fmtPct(ig.reelEng)}</div></div>
+    <div class="kpi"><div class="kpi-label">Videos TikTok</div><div class="kpi-val blue">${tt.videos||0}</div><div class="kpi-sub">${fmt(tt.views)} vistas</div></div>
+    <div class="kpi"><div class="kpi-label">Videos YouTube</div><div class="kpi-val amber">${yt.videos||0}</div><div class="kpi-sub">${fmt(yt.views)} vistas</div></div>
+  </div>
+  <div class="chart-card">
+    <div class="chart-card-header"><span class="chart-title">Audiencia por plataforma</span></div>
+    <div class="legend">
+      <span><span class="ldot" style="background:#00e5a0"></span>Instagram</span>
+      <span><span class="ldot" style="background:#4d9fff"></span>TikTok</span>
+      <span><span class="ldot" style="background:#ffb800"></span>YouTube</span>
+    </div>
+    <div class="chart-wrap" style="height:200px"><canvas id="overviewChart" role="img" aria-label="Audiencia por plataforma">Instagram ${fmt(ig.followersEnd)}, TikTok ${fmt(tt.followersEnd)}, YouTube ${fmt(yt.subsEnd)}.</canvas></div>
+  </div>`;
+}
+
+function renderInstagram(c, ig) {
+  const growth = (ig.followersEnd||0) - (ig.followersStart||0);
+  const reelData = (ig.reelReachValues||[]);
+  c.innerHTML = `
+  <div class="kpi-grid">
+    <div class="kpi"><div class="kpi-label">Seguidores</div><div class="kpi-val green">${fmt(ig.followersEnd)}</div><div class="kpi-sub up">+${fmt(growth)}</div></div>
+    <div class="kpi"><div class="kpi-label">Posts</div><div class="kpi-val">${ig.posts||0}</div><div class="kpi-sub">eng. ${fmtPct(ig.postEng)}</div></div>
+    <div class="kpi"><div class="kpi-label">Alcance posts</div><div class="kpi-val blue">${fmt(ig.postReach)}</div><div class="kpi-sub">total período</div></div>
+    <div class="kpi"><div class="kpi-label">Likes posts</div><div class="kpi-val">${fmt(ig.postLikes)}</div><div class="kpi-sub">${fmt((ig.postLikes||0)/(ig.posts||1))} prom.</div></div>
+    <div class="kpi"><div class="kpi-label">Reels</div><div class="kpi-val">${ig.reels||0}</div><div class="kpi-sub">eng. ${fmtPct(ig.reelEng)}</div></div>
+    <div class="kpi"><div class="kpi-label">Alcance reels</div><div class="kpi-val blue">${fmt(ig.reelReach)}</div><div class="kpi-sub">${fmt((ig.reelReach||0)/(ig.reels||1))} prom.</div></div>
+    <div class="kpi"><div class="kpi-label">Shares posts</div><div class="kpi-val">${fmt(ig.postShares)}</div><div class="kpi-sub">viral intent</div></div>
+    <div class="kpi"><div class="kpi-label">Shares reels</div><div class="kpi-val">${fmt(ig.reelShares)}</div><div class="kpi-sub">viral intent</div></div>
+  </div>
+  <div class="chart-card">
+    <div class="chart-card-header"><span class="chart-title">Alcance por reel (K)</span></div>
+    <div class="chart-wrap" style="height:220px"><canvas id="igReelChart" role="img" aria-label="Alcance reels Instagram"></canvas></div>
+  </div>
+  <div class="insight"><div class="insight-t">🟢 Engagement ${fmtPct(ig.postEng)} — muy por encima del benchmark 1–3%</div><div class="insight-b">Para cuentas de 100K–500K el benchmark es 1–3%. Bagues está en ${fmtPct(ig.postEng)} en posts y ${fmtPct(ig.reelEng)} en reels, lo que genera mayor alcance orgánico gracias al algoritmo.</div></div>`;
+}
+
+function renderTikTok(c, tt) {
+  const avgViews = tt.videos ? Math.round((tt.views||0)/tt.videos) : 0;
+  c.innerHTML = `
+  <div class="kpi-grid">
+    <div class="kpi"><div class="kpi-label">Seguidores</div><div class="kpi-val blue">${fmt(tt.followersEnd)}</div><div class="kpi-sub up">+${fmt(tt.newFollowers)}</div></div>
+    <div class="kpi"><div class="kpi-label">Videos</div><div class="kpi-val">${tt.videos||0}</div><div class="kpi-sub">período</div></div>
+    <div class="kpi"><div class="kpi-label">Vistas totales</div><div class="kpi-val blue">${fmt(tt.views)}</div><div class="kpi-sub">${fmt(avgViews)} prom/video</div></div>
+    <div class="kpi"><div class="kpi-label">Engagement prom.</div><div class="kpi-val green">${fmtPct(tt.avgEng)}</div><div class="kpi-sub">benchmark: 2.5–3.5%</div></div>
+    <div class="kpi"><div class="kpi-label">Likes</div><div class="kpi-val">${fmt(tt.likes)}</div><div class="kpi-sub">${fmt(Math.round((tt.likes||0)/(tt.videos||1)))} prom.</div></div>
+    <div class="kpi"><div class="kpi-label">Shares</div><div class="kpi-val">${fmt(tt.shares)}</div><div class="kpi-sub">${fmt(Math.round((tt.shares||0)/(tt.videos||1)))} prom.</div></div>
+  </div>
+  <div class="chart-card">
+    <div class="chart-card-header"><span class="chart-title">Vistas por video</span><span class="chart-meta">línea roja = benchmark 5K</span></div>
+    <div class="chart-wrap" style="height:220px"><canvas id="ttViewsChart" role="img" aria-label="Vistas por video TikTok"></canvas></div>
+  </div>
+  <div class="insight warn"><div class="insight-t">🟡 ${avgViews < 5000 ? 'Vistas por video por debajo del benchmark (5K)' : 'Vistas por video sobre el benchmark'}</div><div class="insight-b">${avgViews < 5000 ? 'Alta frecuencia de publicación puede estar diluyendo el alcance individual. Reducir a 6–8 videos/mes de mayor calidad puede mejorar significativamente el promedio.' : 'Buen rendimiento por video. Mantener la consistencia del formato.'}</div></div>`;
+}
+
+function renderYouTube(c, yt) {
+  c.innerHTML = `
+  <div class="kpi-grid">
+    <div class="kpi"><div class="kpi-label">Suscriptores</div><div class="kpi-val amber">${fmt(yt.subsEnd)}</div><div class="kpi-sub up">+${fmt(yt.gained)} ganados</div></div>
+    <div class="kpi"><div class="kpi-label">Perdidos</div><div class="kpi-val">${fmt(yt.lost)}</div><div class="kpi-sub">neto +${fmt((yt.gained||0)-(yt.lost||0))}</div></div>
+    <div class="kpi"><div class="kpi-label">Videos</div><div class="kpi-val">${yt.videos||0}</div><div class="kpi-sub">período</div></div>
+    <div class="kpi"><div class="kpi-label">Vistas</div><div class="kpi-val amber">${fmt(yt.views)}</div><div class="kpi-sub">incluye pagas</div></div>
+    <div class="kpi"><div class="kpi-label">Likes</div><div class="kpi-val">${fmt(yt.likes)}</div><div class="kpi-sub">orgánicos</div></div>
+    <div class="kpi"><div class="kpi-label">Shares</div><div class="kpi-val green">${fmt(yt.shares)}</div><div class="kpi-sub up">ratio alto</div></div>
+  </div>
+  <div class="insight info"><div class="insight-t">🔵 Parte de las vistas puede ser tráfico pago</div><div class="insight-b">La campaña "Youtube_Brand_Branding" de Google Ads está activa. Las vistas orgánicas reales se pueden confirmar en YouTube Studio → Analytics → Fuente de tráfico.</div></div>
+  <div class="insight"><div class="insight-t">🟢 Shares extraordinariamente altos</div><div class="insight-b">El ratio shares/vistas supera el 5%, muy por encima del benchmark de YouTube (0.1–0.3%). Señal de contenido con alto valor percibido.</div></div>`;
+}
+
+function renderMetaAds(c, ma) {
+  const t = ma.total || {};
+  const camps = (ma.campaigns||[]).sort((a,b)=>(b.spent||0)-(a.spent||0));
+  const rows = camps.map(camp => `
+    <tr>
+      <td title="${camp.name}">${camp.name}</td>
+      <td><span class="badge ${camp.status==='ACTIVE'?'active':'paused'}">${camp.status==='ACTIVE'?'Activa':'Pausada'}</span></td>
+      <td class="mono">${fmt(camp.impressions)}</td>
+      <td class="mono">${fmtMoney(camp.spent)}</td>
+      <td class="${!camp.roas?'':'camp.roas>=1?'roas-good':camp.roas>0.5?'roas-warn':'roas-bad'}">${fmtRoas(camp.roas)}</td>
+      <td class="mono">${fmt(camp.results)}</td>
+    </tr>`).join('');
+
+  c.innerHTML = `
+  <div class="kpi-grid">
+    <div class="kpi"><div class="kpi-label">Impresiones</div><div class="kpi-val">${fmt(t.impressions)}</div></div>
+    <div class="kpi"><div class="kpi-label">Alcance</div><div class="kpi-val blue">${fmt(t.reach)}</div></div>
+    <div class="kpi"><div class="kpi-label">Clics</div><div class="kpi-val">${fmt(t.clicks)}</div></div>
+    <div class="kpi"><div class="kpi-label">Inversión</div><div class="kpi-val amber">${fmtMoney(t.spent)}</div><div class="kpi-sub">ARS</div></div>
+    <div class="kpi"><div class="kpi-label">Campañas activas</div><div class="kpi-val green">${camps.filter(x=>x.status==='ACTIVE').length}</div><div class="kpi-sub">de ${camps.length} totales</div></div>
+  </div>
+  <p class="section-title">Detalle por campaña</p>
+  <div class="chart-card" style="padding:0;overflow:hidden">
+    <div style="overflow-x:auto">
+    <table class="ads-table">
+      <thead><tr><th style="min-width:180px">Campaña</th><th>Estado</th><th>Impresiones</th><th>Gastado</th><th>ROAS</th><th>Resultados</th></tr></thead>
+      <tbody>${rows}</tbody>
+    </table>
+    </div>
+  </div>`;
+}
+
+function renderGoogleAds(c, ga) {
+  const t = ga.total || {};
+  const camps = (ga.campaigns||[]).sort((a,b)=>(b.spent||0)-(a.spent||0));
+  const rows = camps.map(camp => `
+    <tr>
+      <td title="${camp.name}">${camp.name}</td>
+      <td><span class="type-badge">${camp.type}</span></td>
+      <td class="mono">${fmt(camp.impressions)}</td>
+      <td class="mono">${fmt(camp.clicks)}</td>
+      <td class="mono">${fmtMoney(camp.spent)}</td>
+      <td class="${!camp.roas?'':camp.roas>=1?'roas-good':camp.roas>0.3?'roas-warn':'roas-bad'}">${fmtRoas(camp.roas)}</td>
+      <td class="mono">${fmtPct(camp.ctr)}</td>
+    </tr>`).join('');
+
+  c.innerHTML = `
+  <div class="kpi-grid">
+    <div class="kpi"><div class="kpi-label">Impresiones</div><div class="kpi-val">${fmt(t.impressions)}</div></div>
+    <div class="kpi"><div class="kpi-label">Clics</div><div class="kpi-val blue">${fmt(t.clicks)}</div></div>
+    <div class="kpi"><div class="kpi-label">Inversión</div><div class="kpi-val amber">${fmtMoney(t.spent)}</div><div class="kpi-sub">ARS</div></div>
+    <div class="kpi"><div class="kpi-label">Campañas</div><div class="kpi-val">${camps.length}</div></div>
+  </div>
+  <p class="section-title">Detalle por campaña</p>
+  <div class="chart-card" style="padding:0;overflow:hidden">
+    <div style="overflow-x:auto">
+    <table class="ads-table">
+      <thead><tr><th style="min-width:200px">Campaña</th><th>Tipo</th><th>Impresiones</th><th>Clics</th><th>Gastado</th><th>ROAS</th><th>CTR</th></tr></thead>
+      <tbody>${rows}</tbody>
+    </table>
+    </div>
+  </div>`;
+}
+
+// ── Charts ────────────────────────────────────────────────────────────────────
+function buildCharts() {
+  const tc = '#5a5a6a', gc = 'rgba(255,255,255,0.04)';
+  const mk = (id, type, labels, datasets, extra={}) => {
+    const ctx = document.getElementById(id);
+    if (!ctx) return;
+    if (charts[id]) charts[id].destroy();
+    charts[id] = new Chart(ctx, {
+      type,
+      data: { labels, datasets },
+      options: {
+        responsive: true, maintainAspectRatio: false,
+        plugins: { legend: { display: false } },
+        scales: ['bar','line'].includes(type) ? {
+          x: { ticks: { color: tc, font: { size: 10 }, autoSkip: true, maxRotation: 40 }, grid: { color: gc } },
+          y: { ticks: { color: tc, font: { size: 10 }, ...(extra.yTick||{}) }, grid: { color: gc } },
+          ...(extra.y2 ? { y2: { position:'right', ticks:{ color:tc, font:{size:10} }, grid:{display:false} } } : {})
+        } : {},
+        ...extra.opts
+      }
+    });
+  };
+
+  const t  = currentTab;
+  const ig = data.instagram || {};
+  const tt = data.tiktok    || {};
+
+  if (t === 'overview') {
+    mk('overviewChart', 'bar',
+      ['Instagram', 'TikTok', 'YouTube'],
+      [{ data: [ig.followersEnd||0, tt.followersEnd||0, data.youtube?.subsEnd||0],
+         backgroundColor: ['#00e5a0','#4d9fff','#ffb800'] }]
+    );
+  }
+  if (t === 'instagram') {
+    const rd = ig.reelReachValues || [];
+    mk('igReelChart', 'bar',
+      rd.map(x=>x.label),
+      [{ data: rd.map(x=>x.val), backgroundColor: '#00e5a0' }],
+      { yTick: { callback: v => v+'K' } }
+    );
+  }
+  if (t === 'tiktok') {
+    const vd = tt.viewsByVideo || [];
+    const vals = vd.map(x=>x.val);
+    mk('ttViewsChart', 'bar',
+      vd.map(x=>x.label),
+      [
+        { data: vals, backgroundColor: vals.map(v=>v>=5000?'#00e5a0':'rgba(0,229,160,0.3)'), type:'bar' },
+        { data: Array(vals.length).fill(5000), type:'line', borderColor:'#ff5757', borderDash:[4,3], pointRadius:0, borderWidth:1.5 }
+      ]
+    );
+  }
+}
+
+
+// ── Init ──────────────────────────────────────────────────────────────────────
+setDefaultDates();
+</script>
+</body>
+</html>

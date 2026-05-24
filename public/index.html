@@ -96,19 +96,6 @@ body{padding:20px}
 .empty{color:var(--text3);font-size:12px;text-align:center;padding:48px;font-family:'DM Mono',monospace;line-height:1.8}
 .loading-row{opacity:0.5;animation:pulse 1.2s ease-in-out infinite}
 
-.ai-panel{background:var(--surface);border:1px solid var(--border);border-radius:var(--r2);padding:18px;margin-top:20px}
-.ai-header{display:flex;align-items:center;gap:8px;margin-bottom:14px}
-.ai-badge{background:var(--purple-dim);border:1px solid rgba(167,139,250,0.3);color:var(--purple);font-size:10px;padding:2px 8px;border-radius:20px;font-family:'DM Mono',monospace}
-.ai-title{font-size:13px;font-weight:500}
-.ai-output{font-size:13px;color:var(--text2);line-height:1.7;min-height:44px;white-space:pre-wrap}
-.ai-output .thinking{color:var(--text3);font-style:italic;font-family:'DM Mono',monospace;font-size:12px}
-.ai-input-row{display:flex;gap:8px;margin-top:14px}
-.ai-input{flex:1;background:var(--surface2);border:1px solid var(--border);border-radius:var(--r);padding:9px 12px;color:var(--text);font-family:'DM Sans',sans-serif;font-size:13px;outline:none;transition:border-color 0.15s}
-.ai-input:focus{border-color:var(--purple)}
-.ai-input::placeholder{color:var(--text3)}
-.btn-ask{background:var(--purple-dim);border:1px solid rgba(167,139,250,0.4);color:var(--purple);font-family:'DM Sans',sans-serif;font-size:12px;font-weight:500;padding:9px 16px;border-radius:var(--r);cursor:pointer;transition:all 0.15s;white-space:nowrap}
-.btn-ask:hover{background:rgba(167,139,250,0.2)}
-.btn-ask:disabled{opacity:0.4;cursor:not-allowed}
 </style>
 </head>
 <body>
@@ -153,11 +140,6 @@ body{padding:20px}
   <div class="empty">Seleccioná un período y hacé clic en <strong>Actualizar</strong> para cargar los datos en tiempo real.</div>
 </div>
 
-<div class="ai-panel">
-  <div class="ai-header">
-    <span class="ai-badge">AI</span>
-    <span class="ai-title">Analista de marketing</span>
-  </div>
   <div class="ai-output" id="aiOutput"><span class="thinking">Cargá los datos y preguntame lo que quieras...</span></div>
   <div class="ai-input-row">
     <input class="ai-input" id="aiInput" placeholder="Ej: ¿qué campaña tiene mejor ROAS? ¿cómo va TikTok este mes?" onkeydown="if(event.key==='Enter'&&!event.shiftKey){event.preventDefault();askAI()}">
@@ -685,49 +667,6 @@ function buildCharts() {
   }
 }
 
-// ── AI ────────────────────────────────────────────────────────────────────────
-async function askAI() {
-  const input  = document.getElementById('aiInput');
-  const output = document.getElementById('aiOutput');
-  const btn    = document.getElementById('btnAsk');
-  const q      = input.value.trim();
-  if (!q) return;
-
-  btn.disabled = true;
-  output.innerHTML = '<span class="thinking">Analizando métricas...</span>';
-
-  const context = `
-Datos reales de Bagues Oficial (período ${document.getElementById('dateFrom').value} → ${document.getElementById('dateTo').value}):
-Instagram: followers=${data.instagram?.followersEnd}, growth=${data.instagram?.followersEnd - data.instagram?.followersStart}, postEng=${data.instagram?.postEng?.toFixed(2)}%, reelEng=${data.instagram?.reelEng?.toFixed(2)}%, reels=${data.instagram?.reels}, posts=${data.instagram?.posts}
-TikTok: followers=${data.tiktok?.followersEnd}, videos=${data.tiktok?.videos}, views=${data.tiktok?.views}, avgEng=${data.tiktok?.avgEng?.toFixed(2)}%
-YouTube: subs=${data.youtube?.subsEnd}, gained=${data.youtube?.gained}, views=${data.youtube?.views}, shares=${data.youtube?.shares}
-Meta Ads: invertido=${data.metaads?.total?.spent?.toFixed(0)} ARS, impresiones=${data.metaads?.total?.impressions}, campañas activas=${(data.metaads?.campaigns||[]).filter(x=>x.status==='ACTIVE').length}
-Meta Ads top campañas: ${(data.metaads?.campaigns||[]).slice(0,5).map(c=>`${c.name}(ROAS:${c.roas?.toFixed(2)||'—'},gastado:${c.spent?.toFixed(0)})`).join(', ')}
-Google Ads: invertido=${data.googleads?.total?.spent?.toFixed(0)} ARS, clics=${data.googleads?.total?.clicks}
-Google Ads campañas: ${(data.googleads?.campaigns||[]).map(c=>`${c.name}(ROAS:${c.roas?.toFixed(2)||'—'},CTR:${c.ctr?.toFixed(2)||'—'}%)`).join(', ')}`;
-
-  try {
-    const res = await fetch('/api/ai', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({
-        model: 'claude-sonnet-4-20250514',
-        max_tokens: 1000,
-        system: `Sos un experto en marketing analytics especializado en ecommerce y cosmética argentina.
-Tenés acceso a datos reales de Bagues Oficial. Respondé en español, de forma concisa y accionable.
-Máximo 150 palabras. Sin markdown, texto plano.`,
-        messages: [{ role:'user', content: `${context}\n\nPregunta: ${q}` }]
-      })
-    });
-    const d = await res.json();
-    output.textContent = d.content?.[0]?.text || 'Sin respuesta.';
-    input.value = '';
-  } catch(e) {
-    output.textContent = 'Error: ' + e.message;
-  } finally {
-    btn.disabled = false;
-  }
-}
 
 // ── Init ──────────────────────────────────────────────────────────────────────
 setDefaultDates();

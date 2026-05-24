@@ -8,7 +8,7 @@ const PORT = process.env.PORT || 3000;
 
 // ── Config ────────────────────────────────────────────────────────────────────
 const METRICOOL_TOKEN = process.env.METRICOOL_TOKEN || '';
-const ANTHROPIC_KEY   = process.env.ANTHROPIC_KEY   || '';
+
 const BLOG_ID         = process.env.BLOG_ID         || '4634674';
 const METRICOOL_BASE  = 'https://app.metricool.com/api/v2';
 
@@ -109,9 +109,6 @@ app.get('/api/google-ads', async (req, res) => {
   }
 });
 
-// ── Proxy: Anthropic AI ───────────────────────────────────────────────────────
-app.post('/api/ai', async (req, res) => {
-  if (!ANTHROPIC_KEY) return res.status(500).json({ error: 'ANTHROPIC_KEY no configurado' });
   try {
     const resp = await fetch('https://api.anthropic.com/v1/messages', {
       method: 'POST',
